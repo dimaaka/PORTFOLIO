@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oldyman Portfolio | Roblox Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --accent: #a333ff;
+            --fg: #e0e0e0;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        #cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--accent);
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 10000;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, var(--bg), transparent);
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+
+        .nav-links a, .nav-links span {
+            color: var(--fg);
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-left: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links span:hover { opacity: 1; color: var(--accent); }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 80px 20px;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .avatar-frame {
+            position: absolute;
+            inset: -10px;
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 0 15px rgba(163, 51, 255, 0.3));
+        }
+
+        .avatar-container::before {
+            content: '-23';
+            position: absolute;
+            left: -60px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 5rem;
+            font-weight: 900;
+            opacity: 0.1;
+            color: var(--accent);
+        }
+
+        .hero-text h1 {
+            font-size: clamp(3rem, 15vw, 8rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: -4px;
+            line-height: 0.85;
+        }
+
+        .hero-text p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            opacity: 0.6;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .skills-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+            margin: 40px auto;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .skill-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            background: rgba(163, 51, 255, 0.05);
+        }
+
+        .skill-card b { color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+
+        .work-section {
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project-box {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: var(--transition);
+        }
+
+        .project-box:hover {
+            background: rgba(255,255,255,0.06);
+            transform: scale(1.02);
+        }
+
+        .project-box:hover::before { transform: scaleY(1); }
+
+        .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            background: rgba(163, 51, 255, 0.2);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .contact-section {
+            background: var(--accent);
+            color: #fff;
+            width: 100%;
+            padding: 100px 20px;
+            border-radius: 50px 50px 0 0;
+            text-align: center;
+        }
+
+        .contact-section h2 { font-size: clamp(2.5rem, 8vw, 5rem); margin-bottom: 40px; font-weight: 900; }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .big-btn {
+            display: inline-block;
+            padding: 20px 50px;
+            border: 2px solid #fff;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 900;
+            border-radius: 100px;
+            transition: 0.3s;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .big-btn:hover { background: #fff; color: var(--accent); transform: translateY(-5px); }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px; }
+            .nav-links { display: none; }
+            #cursor { display: none; }
+            .hero { text-align: center; gap: 30px; }
+            .avatar-container::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="toast">Discord Copied!</div>
+
+    <nav>
+        <div class="logo">OLDYMAN</div>
+        <div class="nav-links">
+            <a href="#work">Projects</a>
+            <span onclick="copyDS('my')">Discord</span>
+            <a href="https://github.com/dimaaka">GitHub</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="avatar-container reveal">
+            <div class="avatar-frame"></div>
+            <img src="icon.png" alt="Oldyman" class="avatar-img">
+        </div>
+        <div class="hero-text reveal">
+            <h1>OLDYMAN</h1>
+            <p>Roblox Studio Architect</p>
+        </div>
+    </section>
+
+    <div class="skills-summary reveal">
+        <div class="skill-card">
+            <b>01. logic</b>
+            <p>Advanced game mechanics & backend architecture in Luau.</p>
+        </div>
+        <div class="skill-card">
+            <b>02. optimization</b>
+            <p>High-performance code with zero memory leaks.</p>
+        </div>
+        <div class="skill-card">
+            <b>03. security</b>
+            <p>Robust anti-cheat systems & server-side validation.</p>
+        </div>
+    </div>
+
+    <section class="work-section" id="work">
+        <h2 class="reveal" style="font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 60px; opacity: 0.5;">LATEST DEPLOYMENTS</h2>
+        
+        <div class="projects-grid">
+            <div class="project-box reveal">
+                <span class="tag">System</span>
+                <h3>Vending Machine</h3>
+                <p>Advanced interactive logic: randomized generation, haptic effects, and physical item spawning.</p>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.4;">Sound Design • Physical Math</div>
+            </div>
+
+            <div class="project-box reveal">
+                <span class="tag">Security</span>
+                <h3>Anti-Cheat System</h3>
+                <p>Automated detection and global banning system for exploiters using server-side checks.</p>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.4;">DataStores • Security</div>
+            </div>
+
+            <div class="project-box reveal">
+                <span class="tag">Utility</span>
+                <h3>Autosave System</h3>
+                <p>Reliable session data persistence. Statistics are perfectly synced across all game servers.</p>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.4;">JSON • Data Persistence</div>
+            </div>
+
+            <div class="project-box reveal">
+                <span class="tag">Gameplay</span>
+                <h3>SafeZone System</h3>
+                <p>Multi-team region monitoring. Automatic elimination for unauthorized entry into team zones.</p>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.4;">Spatial Query • Teams</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="reveal">
+            <h2>HAVE A PROJECT?</h2>
+            <div class="footer-links">
+                <div class="big-btn" onclick="copyDS('my')">MY DISCORD</div>
+                <a href="https://github.com/dimaaka" class="big-btn">GITHUB</a>
+            </div>
+            <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.8; margin-top: 50px;">©2026 by oldyman</p>
+        </div>
+    </section>
+
+    <script>
+        const myTag = "oldyman"; 
+        const friendTag = "friend_nick";
+
+        function copyDS(who) {
+            const tag = who === 'my' ? myTag : friendTag;
+            navigator.clipboard.writeText(tag).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+        });
+
+        document.querySelectorAll('a, .project-box, .skill-card, .avatar-container, .big-btn, .nav-links span').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(2.5)';
+                cursor.style.background = 'rgba(163, 51, 255, 0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+                cursor.style.background = 'transparent';
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
