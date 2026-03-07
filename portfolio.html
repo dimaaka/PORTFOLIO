@@ -41,7 +41,6 @@
             transition: transform 0.2s ease, background 0.2s ease;
         }
 
-        /* Toast Notification */
         #toast {
             position: fixed;
             top: 20px;
@@ -290,7 +289,6 @@
     </style>
 </head>
 <body>
-
     <div id="cursor"></div>
     <div id="toast">Discord Copied!</div>
 
@@ -333,6 +331,21 @@
         <h2 class="reveal" style="font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 60px; opacity: 0.5;">LATEST DEPLOYMENTS</h2>
         
         <div class="projects-grid">
+            <!-- New Project Section -->
+            <div class="project-box reveal">
+                <span class="tag">Interface</span>
+                <h3>Supermarket UI Click</h3>
+                <p>Advanced GUI interaction system where players click items to purchase. Includes custom inventory syncing and viewport frame item previews.</p>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.4;">Mouse Interactions • UI Logic</div>
+            </div>
+
+            <div class="project-box reveal">
+                <span class="tag">Economy</span>
+                <h3>Supermarket Quest</h3>
+                <p>Complete shopping logic with DataStore-backed daily limits, dynamic list generation, and leaderstats integration.</p>
+                <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.4;">DataStore V2 • UI Interactivity</div>
+            </div>
+
             <div class="project-box reveal">
                 <span class="tag">System</span>
                 <h3>Vending Machine</h3>
@@ -413,5 +426,4 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
-
 </html>
